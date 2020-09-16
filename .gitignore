@@ -1,0 +1,10 @@
+.idea/opencvProject.iml
+.idea/dictionaries/
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/
+./resources/logs/
+resources/logs/
+DeepLearn/lesson5/models/
+resources/models/
