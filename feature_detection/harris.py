@@ -6,6 +6,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import lib
 
 
 # 自定义角点检测
@@ -54,7 +55,7 @@ def harris(img, ksize=3, k=0.04):
 
 
 def main():
-    filename = r"../resources/man.jpg"
+    filename = r"../resources/process/man.jpg"
     img1 = cv2.imread(filename)
     img2 = img1.copy()
     gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)

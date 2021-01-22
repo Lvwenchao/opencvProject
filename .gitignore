@@ -5,7 +5,8 @@
 .idea/modules.xml
 .idea/
 ./resources/logs/
-resources/logs/
-DeepLearn/lesson5/models/
-resources/models/
-resources/result/
+./resources/fusing/
+./resources/result/
+tools/__pycache__/
+feature_detection/.ipynb_checkpoints/
+

@@ -47,7 +47,6 @@ class GRID:
         driver = gdal.GetDriverByName("GTiff")  # 数据类型必须有，因为要计算需要多大内存空间
         dataset = driver.Create(filename, im_width, im_height, im_bands, datatype)
 
-
         dataset.SetGeoTransform(im_geotrans)  # 写入仿射变换参数
         dataset.SetProjection(im_proj)  # 写入投影
 

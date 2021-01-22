@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    img1 = cv2.imread('../resources/DJI_0020.JPG')
-    img2 = cv2.imread('../resources/DJI_0040.JPG')
+    img1 = cv2.imread('../resources/process/DJI_0020.JPG')
+    img2 = cv2.imread('../resources/process/DJI_0040.JPG')
 
     gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
