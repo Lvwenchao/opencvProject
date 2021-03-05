@@ -6,6 +6,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 # 全局设置
 np.set_printoptions(suppress=True)
@@ -53,7 +54,7 @@ def equalization_his():
 
     # 计算累积分布图
     cdf = hist.cumsum()
-    cdf_normalization = cdf * hist.max() / cdf.max()
+    cdf_normalization = cdf * hist.max(initial=None) / cdf.max()
 
     # 图像均衡化
     # 设置忽略0元素的掩码数组
@@ -66,7 +67,7 @@ def equalization_his():
     img_hist = h[img]
     hist2, bins2 = np.histogram(img_hist.ravel(), 256, [0, 256])
     cdf_hist = hist2.cumsum()
-    cdf_hist_normalization = cdf_hist * hist2.max() / cdf_hist.max()
+    cdf_hist_normalization = cdf_hist * hist2.max(initial=None) / cdf_hist.max()
 
     plt.subplot(121), plt.plot(cdf_normalization, color='b'), plt.hist(img.ravel(), 256, [0, 256], color='r')
     plt.legend(('cdf', 'histogram'), loc='upper left')
@@ -76,6 +77,63 @@ def equalization_his():
     plt.xlim([0, 255])
     plt.show()
 
+    # opencv 中的直方图均衡
+    equ = cv2.equalizeHist(img)
+    res = np.hstack((img, equ))
+    cv2.imwrite('../resources/result/equalization_his_res.jpg', res)
+
+
+# 2_D直方图
+def his_2d(filepath):
+    img = cv2.imread(filepath)
+    img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    hist = cv2.calcHist([img_hsv], [0, 1], None, [180, 256], [0, 180, 0, 256])
+
+    # # numpy 统计2d直方图
+    # hist, xbins, ybins = np.histogram2d(img_hsv[:, :, 0].ravel(),
+    #                                     img_hsv[:, :, 1].ravel(),
+    #                                     [180, 256],
+    #                                     [[0, 180], [0, 256]])
+
+    # 绘制直方图
+    plt.imshow(hist, interpolation='nearest')
+    plt.show()
+
+
+# 直方图反向投影
+def back_projection():
+    image = cv2.imread('../resources/image/DJI_0030.JPG')
+    img_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    sample = image[800:1000, 800:1000, :]
+    sample_hsv = cv2.cvtColor(sample, cv2.COLOR_BGR2HSV)
+
+    M = cv2.calcHist([img_hsv], [0, 1], None, [180, 256], [0, 180, 0, 256])
+    N = cv2.calcHist([sample_hsv], [0, 1], None, [180, 256], [0, 180, 0, 256])
+
+    # 进行归一化
+    cv2.normalize(N, N, 0, 255, cv2.NORM_MINMAX)
+    dst = cv2.calcBackProject([img_hsv], [0, 1], N, [0, 180, 0, 256], 1)
+
+    disc = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+    dst = cv2.filter2D(dst, -1, disc)
+    # threshold and binary AND
+    ret, thresh = cv2.threshold(dst, 50, 255, 0)
+    # # 别忘了是三通道图像，因此这里使用merge 变成3 通道
+    thresh = cv2.merge((thresh, thresh, thresh))
+    print(thresh.shape)
+    # # 按位操作
+    res = cv2.bitwise_and(image, thresh)
+    # res = np.hstack((image, thresh, res))
+    cv2.imwrite('../resources/result/res.jpg', res)
+    # 显示图像
+    plt.imshow(res)
+    plt.show()
+
 
 if __name__ == '__main__':
-    equalization_his()
+    path = "../resources/image/"
+    filename = 'home.jpg'
+    filepath = os.path.join(path, filename)
+    # his_2d(filepath)
+    back_projection()
