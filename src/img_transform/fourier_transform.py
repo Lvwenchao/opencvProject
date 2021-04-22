@@ -72,6 +72,6 @@ def dft(file_path):
 
 if __name__ == '__main__':
     file_name = 'home.JPG'
-    path = "../resources/image/"
+    path = "../../resources/image/"
     file_path = os.path.join(path, file_name)
     dft(file_path)

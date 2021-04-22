@@ -7,10 +7,10 @@
 ./resources/logs/
 ./resources/fusing/
 ./resources/result/
-tools/__pycache__/
-feature_detection/.ipynb_checkpoints/
+src/tools/__pycache__/
+src/feature_detection/.ipynb_checkpoints/
 
 resources/image/DJI_0020_0.JPG
 resources/image/home.jpg
-compression_transmission/.pytest_cache/
+src/compression_transmission/.pytest_cache/
 resources/image/11.jpg

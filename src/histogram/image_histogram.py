@@ -14,7 +14,7 @@ np.set_printoptions(suppress=True)
 
 # 绘制直方图
 def draw_his():
-    img = cv2.imread("../resources/image/DJI_0030.JPG")
+    img = cv2.imread("../../resources/image/DJI_0030.JPG")
 
     # 通过CV统计直方图
     # hist = cv2.calcHist([img], [0], None, [256], [0, 256]).astype(np.int32).ravel()
@@ -102,7 +102,7 @@ def his_2d(filepath):
 
 # 直方图反向投影
 def back_projection():
-    image = cv2.imread('../resources/image/DJI_0030.JPG')
+    image = cv2.imread('../../resources/image/DJI_0030.JPG')
     img_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     sample = image[800:1000, 800:1000, :]
@@ -132,7 +132,7 @@ def back_projection():
 
 
 if __name__ == '__main__':
-    path = "../resources/image/"
+    path = "../../resources/image/"
     filename = 'home.jpg'
     filepath = os.path.join(path, filename)
     # his_2d(filepath)

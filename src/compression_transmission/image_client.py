@@ -40,7 +40,7 @@ def client_side(file_path):
 
 
 if __name__ == '__main__':
-    file_path = "../resources/image/DJI_0020.JPG"
+    file_path = "../../resources/image/DJI_0020.JPG"
     client_side(file_path=file_path)
 
     # 多线程传输
