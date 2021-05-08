@@ -3,13 +3,13 @@
 # @Time     : 2021/1/19 12:42
 # @FileName : read_img.py
 # @Software : PyCharm
+import re
+from PIL import Image
 import numpy as np
 import cv2
 import gdal
 import os.path
-import glymur
-import tempfile
-from PIL import Image
+import matplotlib.pyplot as plt
 
 
 # 对文件排序
@@ -103,7 +103,8 @@ def write_tiff(im_data, im_width, im_height, im_bands, path):
 # loadpng
 def load_img(path):
     try:
-        return cv2.imread(path)
+        img = Image.open(path)
+        return np.asarray(img)
     except IOError:
         return None
 
@@ -234,3 +235,39 @@ def idwt(coffes: tuple):
             original_img = np.vstack((original_img, conv_value))
 
     return original_img
+
+
+# 图像显示
+def show_img(img_list, img_titles, col, row):
+    """
+
+    :type img_titles:  list
+    :param img_titles:  图像标题
+    :param row: 显示行
+    :param col: 显示列
+    :type img_list: list
+    """
+    # img_num = len(img_list)
+
+    for i in range(row):
+        for j in range(col):
+            pos = (row * 100 + col * 10 + (i * col + j + 1))
+            plt.subplot(pos)
+            plt.imshow(img_list[i * col + j], cmap='gray')
+            plt.title(img_titles[i * col + j])
+            plt.xticks([])
+            plt.yticks([])
+    plt.show()
+
+
+# 获取图像位数
+def get_bits(img):
+    sign_type = ["int8", "int16", "int32", "int64"]
+    usign_type = ["uint8", "uint16", "uint32", "uint64"]
+    B = 8
+    dtype = img.dtype
+    if dtype in usign_type:
+        B = int(re.findall(r"\d+", str(dtype))[0])
+    elif dtype not in sign_type and usign_type:
+        raise TypeError
+    return B

@@ -3,33 +3,66 @@
 # @Time     : 2021/4/14 18:35
 # @FileName : jpeg2000.py
 # @Software : PyCharm
+import re
+
 import numpy as np
-import cv2
 from collections import namedtuple
-
-from PIL import Image
-
+from src.tools import img_tools
 from src.tools.img_tools import max_ndarray, dwt, idwt
 
 
+# dc平移
+def dc_offset(img, B):
+    """
+
+    :param B: 图像位数
+    :type img: np.ndarray
+    """
+    img_dc = np.array(img - 2 ** (B - 1), dtype=np.int8)
+    return img_dc
+
+
+def i_dc_offset(img, B):
+    img_i_dc = np.array(img + 2 ** (B - 1), dtype=np.uint8)
+    return img_i_dc
+
+
 # convert bgr to yuv
-def bgr_yuv(img):
+def rgb_yuv(img):
     """
     :param img: BRG
     :return:
     """
-    try:
-        return cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
-    except Exception:
-        return None
+    img_yuv = np.empty_like(img)
+    h, w = img_yuv.shape[:2]
+    for row in range(h):
+        for col in range(w):
+            R, G, B = img[row, col, :]
+            Y = 0.25 * R + 0.5 * G + 0.25 * B
+            U = B - G + 128
+            V = R - G + 128
+            img_yuv[row, col, :] = Y, U, V
+    return img_yuv
 
 
-# bgr_coeff
-def extract_bgr_coeff(img):
-    coeffs_b = dwt(img[:, :, 0])
+def yuv_rgb(img):
+    img_rgb = np.empty_like(img)
+    h, w = img.shape[:2]
+    for row in range(h):
+        for col in range(w):
+            Y, U, V = img[row, col, :]
+            G = Y - 0.25 * (U - 128) - 0.25 * (V - 128)
+            B = U + G - 128
+            R = V + G - 128
+            img_rgb[row, col, :] = R, G, B
+    return img_rgb
+
+
+def extract_rgb_coeff(img):
+    coeffs_r = dwt(img[:, :, 0])
     coeffs_g = dwt(img[:, :, 1])
-    coeffs_r = dwt(img[:, :, 2])
-    return namedtuple("coeffs_bgr", ['coeff_b', 'coeff_g', 'coeff_r'])(coeffs_b, coeffs_g, coeffs_r)
+    coeffs_b = dwt(img[:, :, 2])
+    return namedtuple("coeffs_rgb", ['coeff_r', 'coeff_g', 'coeff_b'])(coeffs_r, coeffs_g, coeffs_b)
 
 
 # yuv_coeff
@@ -127,11 +160,19 @@ def img_from_dwt_coeff(coeff_dwt):
     img_b = reconstruct_help(coeff_dwt.coeff_b, 100)
 
     re_img = np.stack((img_r, img_g, img_b), axis=-1).astype(np.int16)
+
     return re_img
 
 
 def forward(img):
-    img_yuv = bgr_yuv(img)
-    coeffs_yuv = extract_yuv_coeff(img_yuv)
-    quatization_yuv = quatization(coeffs_yuv, 30)
-    return quatization_yuv
+    B = img_tools.get_bits(img)
+    img = dc_offset(img, B)
+    print(img.shape)
+    img_yuv = rgb_yuv(img)
+
+    # print(img_yuv.shape)
+    # print(type(img_yuv))
+    # print(img_yuv.shape)
+    # coeffs_yuv = extract_yuv_coeff(img_yuv)
+    # quatization_yuv = quatization(coeffs_yuv, 30)
+    # return quatization_yuv

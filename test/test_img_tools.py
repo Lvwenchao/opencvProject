@@ -4,11 +4,8 @@
 # @FileName : test_img_tools.py
 # @Software : PyCharm
 from src.tools import img_tools
-import glymur
 import os
 from PIL import Image
-import re
-import glymur
 import numpy as np
 
 FOLDER = "../resources/image"
@@ -26,3 +23,6 @@ class TestImageTools:
         # print(codeStream.segment[1])
         print(np.asarray(img).shape)
 
+    def test_show_img(self):
+        img_list = [1, 2, 3, 4]
+        img_tools.show_img(img_list, 2, 2)
